@@ -14,7 +14,10 @@ class ColorCorrectionMetrics:
         Returns:
             ndarray: Angles in degrees, shape predicted.shape[:-1].
         """
-        angle_deg = ...
+        dot_product = np.sum(predicted * target, axis=-1)
+        cos = dot_product / (np.linalg.norm(target, axis=-1) * np.linalg.norm(predicted, axis=-1))
+        cos = np.clip(cos, -1.0, 1.0)
+        angle_deg = np.degrees(np.arccos(cos))
         return angle_deg
 
 
@@ -30,7 +33,11 @@ class ColorCorrectionMetrics:
         Returns:
             ndarray: Shape predicted.shape[:-1], angles in degrees.
         """
-        angle_deg = ...
+        relation = predicted / target 
+        dot_product = np.dot(relation, np.array([1, 1, 1]))
+        cos = dot_product / (np.linalg.norm(relation, axis=-1) * np.sqrt(3))
+        cos = np.clip(cos, -1.0, 1.0)
+        angle_deg = np.rad2deg(np.arccos(cos))
         return angle_deg
 
 

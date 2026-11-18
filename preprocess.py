@@ -32,7 +32,7 @@ def augment_whitepoint(hsi: np.ndarray, whitepatch_mask: np.ndarray,
     Returns:
         (height, width, bands) relit HSI
     """
-    spectra_whitepoint = ...
+    spectra_whitepoint = np.average(hsi[whitepatch_mask], axis=0)
     return hsi / spectra_whitepoint * new_illuminant
 
 
@@ -74,8 +74,15 @@ def get_color_responses(hsi: np.ndarray, sens: np.ndarray):
     Returns:
         (height, width, 3) color responses
     """
-    colors = ...
+    # (height, width, bands) = hsi.shape
+    # colors = np.zeros((height, width, 3))
+    # for color in range(3):
+    #     for band in range(bands):
+    #         colors[:, :, color] += hsi[:, :, band] * sens[band, color]
+
+    colors = hsi @ sens    
     return colors
+
 
 
 XYZ2LINRGB = np.array([[3.2406, -1.5372, -0.4986],
@@ -90,7 +97,8 @@ def xyz2linrgb(xyz: np.ndarray):
     Returns:
         linrgb: Linear RGB values (height, width, 3)
     """
-    linrgb = ...
+    linrgb = xyz @ XYZ2LINRGB
+    linrgb = np.clip(linrgb, 0, 1)
     return linrgb.astype(np.float32)
 
 def linrgb2srgb(linrgb: np.ndarray):
@@ -101,7 +109,9 @@ def linrgb2srgb(linrgb: np.ndarray):
     Returns:
         srgb: sRGB values (height, width, 3)
     """
-    srgb = ...
+    a = 0.055
+    srgb = np.where(linrgb <= 0.0031308, 12.92 * linrgb, (1 + a) * linrgb ** (1//2.4) - a)
+    srgb = np.clip(srgb, 0, 1)
     return srgb.astype(np.float32)
 
 def xyz2srgb(xyz: np.ndarray):

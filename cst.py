@@ -28,7 +28,8 @@ class PolynomialColorCorrection:
         self.regressor = None
 
     def _transform_features(self, X):
-        transformed = ...
+        features = PolynomialFeatures(self.degree, include_bias=False)
+        transformed = features.fit_transform(X)
         return transformed
 
     def fit(self, src, dst):
@@ -103,7 +104,13 @@ class RootPolynomialColorCorrection:
 
     def _transform_features(self, X):
         """Transform input features using root-polynomial terms"""
-        transformed = ...
+        
+        features = PolynomialFeatures(self.degree, include_bias=False, interaction_only=True)
+        transformed = np.astype(features.fit_transform(X), np.float64)
+        powers = np.astype(features.powers_, np.float64)
+
+        powers = np.sum(powers, axis = -1) ** -1
+        transformed = transformed ** powers
         return transformed
 
     def fit(self, src, dst):
@@ -178,7 +185,14 @@ class ScalableRationalColorCorrection:
     
     def _transform_features(self, X):
         """Transform input features using scalable-rational terms"""
-        transformed = ...
+        features = PolynomialFeatures(self.degree, include_bias=False)
+        transformed = np.astype(features.fit_transform(X), np.float64)
+        S = np.sum(X, axis=-1, keepdims=True) + self.eps
+        
+        powers = np.astype(features.powers_, np.float64)
+        S_powers = (np.sum(powers, axis=-1) - 1)
+        
+        transformed /= (S ** S_powers)
         return transformed
     
     def fit(self, src, dst):
