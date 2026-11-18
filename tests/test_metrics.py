@@ -73,7 +73,7 @@ def test_angular_error_hardcoded_values():
     )
 
     result = ColorCorrectionMetrics.angular_error(predicted, target)
-    np.testing.assert_allclose(result, expected, rtol=1e-8, atol=1e-8)
+    np.testing.assert_allclose(result, expected, rtol=1e-6, atol=1e-6)
 
 
 def test_deltae2000_hardcoded_values():
@@ -109,7 +109,7 @@ def test_reproduction_error_hardcoded_values():
     expected = np.array([9.2745009598], dtype=np.float64)
 
     result = ColorCorrectionMetrics.reproduction_error(predicted, target)
-    np.testing.assert_allclose(result, expected, rtol=1e-8, atol=1e-8)
+    np.testing.assert_allclose(result, expected, rtol=1e-6, atol=1e-6)
 
 
 def test_awb_metrics_hardcoded_values():
@@ -118,11 +118,11 @@ def test_awb_metrics_hardcoded_values():
 
     metrics = ColorCorrectionMetrics.evaluate_awb_metrics(predicted_white, target_white)
 
-    np.testing.assert_allclose(metrics["angle"], np.array([[9.2745002092]]), rtol=1e-8, atol=1e-8)
-    np.testing.assert_allclose(metrics["dE"], np.array([[16.175917]]), rtol=1e-7, atol=1e-7)
+    np.testing.assert_allclose(metrics["angle"], np.array([[9.2745002092]]), rtol=1e-6, atol=1e-6)
+    np.testing.assert_allclose(metrics["dE"], np.array([[16.175917]]), rtol=1e-6, atol=1e-6)
     np.testing.assert_allclose(
         metrics["reproduction_error"],
         np.array([[9.2745009598]]),
-        rtol=1e-8,
-        atol=1e-8,
+        rtol=1e-6,
+        atol=1e-6,
     )

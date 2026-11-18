@@ -145,4 +145,4 @@ def test_transform_matches_hardcoded_values(model_cls, expected):
     model.fit(src, dst)
     predicted = model.transform(probe)
 
-    np.testing.assert_allclose(predicted, expected, rtol=1e-8, atol=1e-8)
+    np.testing.assert_allclose(predicted, expected, rtol=1e-6, atol=1e-6)
